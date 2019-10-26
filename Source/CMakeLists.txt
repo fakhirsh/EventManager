@@ -9,11 +9,12 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/../Bin)
 #include_directories("FastDelegate")
 
 set ( HDR
-
+        Event.hpp
     )
 
 set ( SRC
         main.cpp
+        Event.cpp
     )
 	
 # Executable
@@ -23,7 +24,7 @@ add_executable(${PROJECT_NAME}
             )
 
 
-target_link_libraries(${PROJECT_NAME} 
+#target_link_libraries(${PROJECT_NAME} 
 #                            FEngine
-                     )
+                     #)
 

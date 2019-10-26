@@ -3,6 +3,10 @@
 #include <vector>
 #include "FastDelegate/FastDelegate.h"
 #include "CppDelegates/Delegate.h"
+#include "Event.hpp"
+#include <map>
+#include <string>
+
 
 using namespace std;
 using namespace CppDelegates;
@@ -68,7 +72,20 @@ int main( void )
     emgr.AddListener(d3);
     
     emgr.Call();
-    
+
+    FEngine::Event e;
+    e.SetEventId(5545);
+    e.SetEventType("Hit");
+    e.SetArg("damage", 20.0);
+    e.SetArg("speed", 30.0);
+    e.SetArg("happy", 100.0);
+
+
+    map<string, double> args;
+    args["damage"] = 20.0;
+
+    cout << e.GetArg("speed") << endl;
+
 	return 0;
 }
 
