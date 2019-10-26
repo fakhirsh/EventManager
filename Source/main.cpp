@@ -8,6 +8,8 @@
 #include <map>
 #include <string>
 #include <chrono>
+#include <memory>
+
 
 using namespace std;
 using namespace std::chrono;
@@ -19,9 +21,9 @@ using namespace FEngine;
 
 class GameObj{
     public:
-        void OnEvent(Event e){
-            //cout << this << "  GameObj::OnEvent --> " << e.GetArg("health") << endl;
-            double d = e.GetArg("health");
+        void OnEvent(EventPtr e){
+            cout << this << "  GameObj::OnEvent --> " << e->GetArg("health") << endl;
+            double d = e->GetArg("health");
         }
 };
 
@@ -48,9 +50,13 @@ class GameObj{
  *};
  */
 
-void Benchmark1(unsigned int iterations);
-void Benchmark2(unsigned int iterations);
-void Benchmark3(unsigned int iterations);
+/*
+ *void Benchmark1(unsigned int iterations);
+ *void Benchmark2(unsigned int iterations);
+ *void Benchmark3(unsigned int iterations);
+ */
+
+void Benchmark4(unsigned int iterations);
 
 int main( void )
 {
@@ -97,129 +103,180 @@ int main( void )
  *    cout << e.GetArg("speed") << endl;
  */
 
-    unsigned int iterations = 20000;
+    unsigned int iterations = 20;
     //Benchmark1(iterations);
     //Benchmark2(iterations);
-    Benchmark3(iterations);
-
-	return 0;
+    //Benchmark3(iterations);
+    Benchmark4(iterations);
+	
+    return 0;
 }
 
+/*
+ *
+ *void Benchmark1(unsigned int iterations){
+ *
+ *    cout << "Benchmark 1" << endl;
+ *    cout << "Creating " << iterations << " events" << endl;
+ *
+ *    long int time = 0;
+ *    long int newtime = 0;
+ *
+ *    const long int num = high_resolution_clock::period::num;
+ *    const long int den = high_resolution_clock::period::den;
+ *    time = high_resolution_clock::now().time_since_epoch().count();
+ *
+ *    unsigned int count = 0;
+ *    do{
+ *        FEngine::Event e;
+ *        e.SetEventName("Game Started");
+ *        e.SetEventType("Hit");
+ *        e.SetArg("damage", 20.0);
+ *        e.SetArg("speed", 30.0);
+ *        e.SetArg("happy", 100.0);
+ *
+ *        double temp = e.GetArg("damage");
+ *        temp = e.GetArg("speed");
+ *        temp = e.GetArg("happy");
+ *        // HUGE panelty time wise:
+ *        temp = e.GetArg("unknown");
+ *
+ *        count++;
+ *    }while(count < iterations);
+ *
+ *    newtime = high_resolution_clock::now().time_since_epoch().count();
+ *    double dt = (newtime - time) * 1.0 * num / den;
+ *
+ *    cout << "Elapsed time:  " << dt*1000 << " (msec)" << endl;
+ *}
+ *
+ *void Benchmark2(unsigned int iterations){
+ *    cout << "Benchmark 2" << endl;
+ *    cout << "Creating " << iterations << " events" << endl;
+ *
+ *    long int time = 0;
+ *    long int newtime = 0;
+ *
+ *    const long int num = high_resolution_clock::period::num;
+ *    const long int den = high_resolution_clock::period::den;
+ *    time = high_resolution_clock::now().time_since_epoch().count();
+ *
+ *
+ *    unsigned int count = 0;
+ *    do{
+ *        map<string, double> args;
+ *
+ *        args["damage"] = 20.0;
+ *        args["speed"] = 30.0;
+ *        args["happy"] = 100.0;
+ *
+ *        double temp = args["damage"];
+ *        temp = args["speed"];
+ *        temp = args["happy"];
+ *        // HUGE panelty time wise:
+ *        temp = args["unknown"];
+ *
+ *        count++;
+ *    }while(count < iterations);
+ *
+ *    newtime = high_resolution_clock::now().time_since_epoch().count();
+ *    double dt = (newtime - time) * 1.0 * num / den;
+ *
+ *    cout << "Elapsed time:  " << dt*1000 << " (msec)" << endl;
+ *
+ *}
+ *
+ *void Benchmark3(unsigned int iterations){
+ *    cout << "Benchmark 3" << endl;
+ *    cout << "Creating " << iterations << " events" << endl;
+ *
+ *    EventManager mgr;
+ *    GameObj obj1, obj2, obj3;
+ *    auto d1 = EventDelegate::create<GameObj, &GameObj::OnEvent>(&obj1);
+ *    auto d2 = EventDelegate::create<GameObj, &GameObj::OnEvent>(&obj2);
+ *    auto d3 = EventDelegate::create<GameObj, &GameObj::OnEvent>(&obj3);
+ *
+ *    mgr.AddListener("gamestart", d1);
+ *    mgr.AddListener("gamestart", d2);
+ *    mgr.AddListener("gamestart", d3);
+ *
+ *
+ *    for(int i = 0; i < iterations; i++){
+ *        Event e;
+ *        e.SetEventType("gamestart");
+ *        e.SetEventName("Random Event");
+ *        e.SetArg("health", 100+i);
+ *        mgr.EnQueue(e);
+ *    }
+ *
+ *    long int time = 0;
+ *    long int newtime = 0;
+ *
+ *    const long int num = high_resolution_clock::period::num;
+ *    const long int den = high_resolution_clock::period::den;
+ *    time = high_resolution_clock::now().time_since_epoch().count();
+ *
+ *
+ *    unsigned int count = 0;
+ *    do{
+ *        
+ *        mgr.Update(0.0f);
+ *
+ *        count++;
+ *    }while(count < iterations);
+ *
+ *    newtime = high_resolution_clock::now().time_since_epoch().count();
+ *    double dt = (newtime - time) * 1.0 * num / den;
+ *
+ *    cout << "Elapsed time:  " << dt*1000 << " (msec)" << endl;
+ *
+ *}
+ *
+ */
 
-void Benchmark1(unsigned int iterations){
-
-    cout << "Benchmark 1" << endl;
-    cout << "Creating " << iterations << " events" << endl;
-
-    long int time = 0;
-    long int newtime = 0;
-
-    const long int num = high_resolution_clock::period::num;
-    const long int den = high_resolution_clock::period::den;
-    time = high_resolution_clock::now().time_since_epoch().count();
-
-    unsigned int count = 0;
-    do{
-        FEngine::Event e;
-        e.SetEventName("Game Started");
-        e.SetEventType("Hit");
-        e.SetArg("damage", 20.0);
-        e.SetArg("speed", 30.0);
-        e.SetArg("happy", 100.0);
-
-        double temp = e.GetArg("damage");
-        temp = e.GetArg("speed");
-        temp = e.GetArg("happy");
-        // HUGE panelty time wise:
-        temp = e.GetArg("unknown");
-
-        count++;
-    }while(count < iterations);
-
-    newtime = high_resolution_clock::now().time_since_epoch().count();
-    double dt = (newtime - time) * 1.0 * num / den;
-
-    cout << "Elapsed time:  " << dt*1000 << " (msec)" << endl;
-}
-
-void Benchmark2(unsigned int iterations){
-    cout << "Benchmark 2" << endl;
-    cout << "Creating " << iterations << " events" << endl;
-
-    long int time = 0;
-    long int newtime = 0;
-
-    const long int num = high_resolution_clock::period::num;
-    const long int den = high_resolution_clock::period::den;
-    time = high_resolution_clock::now().time_since_epoch().count();
-
-
-    unsigned int count = 0;
-    do{
-        map<string, double> args;
-
-        args["damage"] = 20.0;
-        args["speed"] = 30.0;
-        args["happy"] = 100.0;
-
-        double temp = args["damage"];
-        temp = args["speed"];
-        temp = args["happy"];
-        // HUGE panelty time wise:
-        temp = args["unknown"];
-
-        count++;
-    }while(count < iterations);
-
-    newtime = high_resolution_clock::now().time_since_epoch().count();
-    double dt = (newtime - time) * 1.0 * num / den;
-
-    cout << "Elapsed time:  " << dt*1000 << " (msec)" << endl;
-
-}
-
-void Benchmark3(unsigned int iterations){
-    cout << "Benchmark 3" << endl;
-    cout << "Creating " << iterations << " events" << endl;
-
-    EventManager mgr;
-    GameObj obj1, obj2, obj3;
-    auto d1 = EventDelegate::create<GameObj, &GameObj::OnEvent>(&obj1);
-    auto d2 = EventDelegate::create<GameObj, &GameObj::OnEvent>(&obj2);
-    auto d3 = EventDelegate::create<GameObj, &GameObj::OnEvent>(&obj3);
-
-    mgr.AddListener("gamestart", d1);
-    mgr.AddListener("gamestart", d2);
-    mgr.AddListener("gamestart", d3);
-
-
-    for(int i = 0; i < iterations; i++){
-        Event e;
-        e.SetEventType("gamestart");
-        e.SetEventName("Random Event");
-        e.SetArg("health", 100+i);
-        mgr.EnQueue(e);
-    }
-
-    long int time = 0;
-    long int newtime = 0;
-
-    const long int num = high_resolution_clock::period::num;
-    const long int den = high_resolution_clock::period::den;
-    time = high_resolution_clock::now().time_since_epoch().count();
-
-
-    unsigned int count = 0;
-    do{
-        
-        mgr.Update(0.0f);
-
-        count++;
-    }while(count < iterations);
-
-    newtime = high_resolution_clock::now().time_since_epoch().count();
-    double dt = (newtime - time) * 1.0 * num / den;
-
-    cout << "Elapsed time:  " << dt*1000 << " (msec)" << endl;
+ 
+void Benchmark4(unsigned int iterations){
+     cout << "Benchmark 3" << endl;
+     cout << "Creating " << iterations << " events" << endl;
+ 
+     EventManager mgr;
+     GameObj obj1, obj2, obj3;
+     auto d1 = EventDelegate::create<GameObj, &GameObj::OnEvent>(&obj1);
+     auto d2 = EventDelegate::create<GameObj, &GameObj::OnEvent>(&obj2);
+     auto d3 = EventDelegate::create<GameObj, &GameObj::OnEvent>(&obj3);
+ 
+     mgr.AddListener("gamestart", d1);
+     mgr.AddListener("gamestart", d2);
+     mgr.AddListener("gamestart", d3);
+ 
+ 
+     for(int i = 0; i < iterations; i++){
+         EventPtr e = make_shared<Event>();
+         e->SetEventType("gamestart");
+         e->SetEventName("Random Event");
+         e->SetArg("health", 100+i);
+         mgr.EnQueue(e);
+     }
+ 
+     long int time = 0;
+     long int newtime = 0;
+ 
+     const long int num = high_resolution_clock::period::num;
+     const long int den = high_resolution_clock::period::den;
+     time = high_resolution_clock::now().time_since_epoch().count();
+ 
+ 
+     unsigned int count = 0;
+     do{
+         
+         mgr.Update(0.0f);
+ 
+         count++;
+     }while(count < iterations);
+ 
+     newtime = high_resolution_clock::now().time_since_epoch().count();
+     double dt = (newtime - time) * 1.0 * num / den;
+ 
+     cout << "Elapsed time:  " << dt*1000 << " (msec)" << endl;
 
 }
