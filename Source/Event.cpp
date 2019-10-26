@@ -5,7 +5,7 @@ namespace FEngine{
 
     Event::Event(){
         _eventType = "invalid";
-        _eventId = -1;
+        _eventName = "invalid";
     }
     
     Event::~Event(){
@@ -28,12 +28,12 @@ namespace FEngine{
         return _eventType;
     }
 
-    void Event::SetEventId(unsigned int id){
-        _eventId = id;
+    void Event::SetEventName(const string & name){
+        _eventName = name;
     }
     
-    unsigned int Event::GetEventId(){
-        return _eventId;
+    string Event::GetEventName(){
+        return _eventName;
     }
 
 };

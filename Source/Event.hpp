@@ -8,6 +8,8 @@ using namespace std;
 
 namespace FEngine{
 
+    typedef string EventType;
+
     /*
      * The Event object. Right now event type is a string. A dictionary of
      *   arguments with key as string and values as ONLY doubles.
@@ -21,15 +23,15 @@ namespace FEngine{
             void SetArg(string key, double value); 
             double GetArg(string key);
 
-            void SetEventType(const string & type);
-            string GetEventType();
+            void SetEventType(const EventType & type);
+            EventType GetEventType();
 
-            void SetEventId(unsigned int id);
-            unsigned int GetEventId();
+            void SetEventName(const string & name);
+            string GetEventName();
 
         private: 
-            string _eventType;
-            unsigned int _eventId;
+            EventType _eventType;
+            string _eventName;
             map<string, double> _args;
     };
 

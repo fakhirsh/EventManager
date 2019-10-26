@@ -10,11 +10,13 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/../Bin)
 
 set ( HDR
         Event.hpp
+        EventManager.hpp
     )
 
 set ( SRC
         main.cpp
         Event.cpp
+        EventManager.cpp
     )
 	
 # Executable
